@@ -199,24 +199,6 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
           <SafeIcon icon={Strikethrough} size={18} />
         </button>
         <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
-        >
-          <SafeIcon icon={List} size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
-        >
-          <SafeIcon icon={ListOrdered} size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('blockquote') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
-        >
-          <SafeIcon icon={Quote} size={18} />
-        </button>
         <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         <button
           onClick={() => editor.chain().focus().undo().run()}
