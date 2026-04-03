@@ -7,10 +7,10 @@ import { CollaborationCursor } from '@tiptap/extension-collaboration-cursor';
 import UnderlineExtension from '@tiptap/extension-underline';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-import { 
+import {
   Bold, Italic, Underline, List, ListOrdered,
   Quote, RotateCcw, RotateCw, Save, Info, AlertTriangle,
-  Download, Loader2, FileText, File, ChevronDown
+  Download, Loader2
 } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 
@@ -29,11 +29,11 @@ const getRandomColor = () => COLORS[Math.floor(Math.random() * COLORS.length)];
 
 // Internal Editor component that only mounts when Yjs is ready
 const TipTapEditor = ({ ydoc, provider, username }) => {
-  console.log('[TipTapEditor] Props:', { 
-    ydoc: !!ydoc, 
-    provider: !!provider, 
+  console.log('[TipTapEditor] Props:', {
+    ydoc: !!ydoc,
+    provider: !!provider,
     awareness: provider ? !!provider.awareness : false,
-    username 
+    username
   });
 
   const extensions = useMemo(() => {
@@ -41,7 +41,7 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
       console.warn('[TipTapEditor] Dependencies not fully ready for CollaborationCursor');
       return [];
     }
-    
+
     return [
       StarterKit.configure({
         history: false,
@@ -63,29 +63,15 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   const editor = useEditor({
     extensions,
   });
-  
+
   const [isExporting, setIsExporting] = useState(false);
-  const [showExportDropdown, setShowExportDropdown] = useState(false);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowExportDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const getDocTitle = () => document.querySelector('h1')?.innerText || 'Collaborative-Document';
 
   const handleExportPDF = async () => {
     if (!editor || isExporting) return;
-    
+
     setIsExporting(true);
     const element = document.querySelector('.ProseMirror');
-    
+
     if (!element) {
       console.error('Editor element not found for PDF export');
       setIsExporting(false);
@@ -93,14 +79,14 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
     }
 
     // Get the actual document title from the page if possible
-    const docTitle = getDocTitle();
-    
+    const docTitle = document.querySelector('h1')?.innerText || 'Collaborative-Document';
+
     const opt = {
-      margin:       1,
-      filename:     `${docTitle}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      margin: 1,
+      filename: `${docTitle}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
     try {
@@ -109,45 +95,7 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
       console.error('PDF Export failed:', err);
     } finally {
       setIsExporting(false);
-      setShowExportDropdown(false);
     }
-  };
-
-  const handleExportWord = () => {
-    if (!editor) return;
-    const content = editor.getHTML();
-    const docTitle = getDocTitle();
-    
-    // Simple HTML to Word (.doc) template
-    const header = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta charset='utf-8'><title>${docTitle}</title></head><body style='font-family: Arial, sans-serif;'>`;
-    const footer = "</body></html>";
-    const sourceHTML = header + content + footer;
-    
-    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-    const fileDownload = document.createElement("a");
-    document.body.appendChild(fileDownload);
-    fileDownload.href = source;
-    fileDownload.download = `${docTitle}.doc`;
-    fileDownload.click();
-    document.body.removeChild(fileDownload);
-    setShowExportDropdown(false);
-  };
-
-  const handleExportText = () => {
-    if (!editor) return;
-    const content = editor.getText();
-    const docTitle = getDocTitle();
-    
-    const element = document.createElement("a");
-    const file = new Blob([content], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = `${docTitle}.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    setShowExportDropdown(false);
   };
 
   if (!editor || extensions.length === 0) {
@@ -160,9 +108,9 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500 relative">
+    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 sticky top-0 z-20 rounded-t-xl">
+      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-x-auto no-scrollbar">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
@@ -218,82 +166,28 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
         >
           <SafeIcon icon={RotateCw} size={18} />
         </button>
-        
+
         <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
-        
-        {/* Export Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setShowExportDropdown(!showExportDropdown)}
-            className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
-              isExporting 
-              ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed border-gray-200 dark:border-slate-700' 
+
+        <button
+          onClick={handleExportPDF}
+          className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${isExporting
+              ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed border-gray-200 dark:border-slate-700'
               : 'bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 border-primary-100 dark:border-primary-900/30 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:border-primary-200 shadow-sm'
             }`}
-            disabled={isExporting}
-            title="Download Document"
-          >
-            {isExporting ? (
-              <SafeIcon icon={Loader2} size={14} className="animate-spin" />
-            ) : (
-              <SafeIcon icon={Download} size={14} className="group-hover:-translate-y-0.5 transition-transform" />
-            )}
-            <span className="text-xs font-bold whitespace-nowrap">
-              {isExporting ? 'Exporting...' : 'Export'}
-            </span>
-            <SafeIcon icon={ChevronDown} size={12} className={`transition-transform duration-300 ${showExportDropdown ? 'rotate-180' : ''}`} />
-          </button>
-
-          {showExportDropdown && (
-            <div className="absolute top-full right-0 mt-2 w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-gray-100 dark:border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] rounded-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="px-4 py-3 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500 flex items-center gap-2">
-                  <Download size={10} />
-                  Format Selection
-                </span>
-              </div>
-              <div className="p-1.5">
-                <button
-                  onClick={handleExportPDF}
-                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
-                >
-                  <div className="p-2 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-lg group-hover/item:scale-110 transition-transform">
-                    <SafeIcon icon={File} size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold">PDF Document</span>
-                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Perfect for sharing</span>
-                  </div>
-                </button>
-                <button
-                  onClick={handleExportWord}
-                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
-                >
-                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg group-hover/item:scale-110 transition-transform">
-                    <SafeIcon icon={File} size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold">Word (.doc)</span>
-                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Editable format</span>
-                  </div>
-                </button>
-                <button
-                  onClick={handleExportText}
-                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
-                >
-                  <div className="p-2 bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 rounded-lg group-hover/item:scale-110 transition-transform">
-                    <SafeIcon icon={FileText} size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold">Plain Text</span>
-                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Raw content only</span>
-                  </div>
-                </button>
-              </div>
-            </div>
+          disabled={isExporting}
+          title="Export to PDF"
+        >
+          {isExporting ? (
+            <SafeIcon icon={Loader2} size={14} className="animate-spin" />
+          ) : (
+            <SafeIcon icon={Download} size={14} className="group-hover:-translate-y-0.5 transition-transform" />
           )}
-        </div>
-        
+          <span className="text-xs font-bold whitespace-nowrap">
+            {isExporting ? 'Exporting...' : 'PDF'}
+          </span>
+        </button>
+
         <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 font-medium px-2">
           <SafeIcon icon={Save} size={14} className="text-green-500" />
           <span>Autosaved</span>
@@ -328,13 +222,13 @@ const Editor = ({ docId, username, onProviderReady }) => {
   useEffect(() => {
     // Prevent double-initialization in React 19
     if (ydocRef.current) return;
-    
+
     try {
       const doc = new Y.Doc();
       console.log(`[Editor] Initializing connection for ${docId}`);
-      
+
       const prov = new WebsocketProvider(WS_URL, docId, doc);
-      
+
       prov.on('status', event => {
         console.log(`[Editor] Connection status for ${docId}:`, event.status);
       });
@@ -346,7 +240,7 @@ const Editor = ({ docId, username, onProviderReady }) => {
 
       ydocRef.current = doc;
       providerRef.current = prov;
-      
+
       setIsReady(true);
       if (onProviderReady) onProviderReady(prov);
 

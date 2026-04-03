@@ -53,6 +53,14 @@ CollabDocs utilizes a **Distributed State** model to ensure performance:
 
 ---
 
+## 🏗️ Architecture Deep-Dive
+
+For a detailed technical overview, including **UML Class Diagrams**, **Use Case Flows**, and **Sequence Diagrams** (Real-time synchronization), please visit:
+
+📄 **[Architecture Documentation (UML Diagrams)](./ARCHITECTURE.md)**
+
+---
+
 ## 🚀 Getting Started
 
 ### **Prerequisites**
