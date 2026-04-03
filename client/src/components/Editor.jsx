@@ -9,8 +9,10 @@ import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { 
   Bold, Italic, Underline, List, ListOrdered,
-  Quote, RotateCcw, RotateCw, Save, Info, AlertTriangle
+  Quote, RotateCcw, RotateCw, Save, Info, AlertTriangle,
+  Download, Loader2
 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 
 // Safe Icon wrapper to prevent crashes if an icon is missing in lucide-react@1.7.0
 const SafeIcon = ({ icon: Icon, fallback: Fallback = AlertTriangle, ...props }) => {
@@ -61,6 +63,40 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   const editor = useEditor({
     extensions,
   });
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportPDF = async () => {
+    if (!editor || isExporting) return;
+    
+    setIsExporting(true);
+    const element = document.querySelector('.ProseMirror');
+    
+    if (!element) {
+      console.error('Editor element not found for PDF export');
+      setIsExporting(false);
+      return;
+    }
+
+    // Get the actual document title from the page if possible
+    const docTitle = document.querySelector('h1')?.innerText || 'Collaborative-Document';
+    
+    const opt = {
+      margin:       1,
+      filename:     `${docTitle}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    try {
+      await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error('PDF Export failed:', err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (!editor || extensions.length === 0) {
     return (
@@ -129,6 +165,28 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
           disabled={!editor.can().redo()}
         >
           <SafeIcon icon={RotateCw} size={18} />
+        </button>
+        
+        <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+        
+        <button
+          onClick={handleExportPDF}
+          className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
+            isExporting 
+            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' 
+            : 'bg-white text-primary-600 border-primary-100 hover:bg-primary-50 hover:border-primary-200 shadow-sm'
+          }`}
+          disabled={isExporting}
+          title="Export to PDF"
+        >
+          {isExporting ? (
+            <SafeIcon icon={Loader2} size={14} className="animate-spin" />
+          ) : (
+            <SafeIcon icon={Download} size={14} className="group-hover:-translate-y-0.5 transition-transform" />
+          )}
+          <span className="text-xs font-bold whitespace-nowrap">
+            {isExporting ? 'Exporting...' : 'PDF'}
+          </span>
         </button>
         
         <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 font-medium px-2">
