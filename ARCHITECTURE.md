@@ -8,6 +8,8 @@ This document provide a deep-dive into the architectural patterns, data models, 
 
 The system is built on a robust, relational-meta model using **Mongoose (MongoDB)** for persistence and **Yjs/CRDTs** for operational data.
 
+![Class Diagram](./client/public/assets/diagrams/class_diagram.png)
+
 ```mermaid
 classDiagram
     class User {
@@ -48,6 +50,8 @@ classDiagram
 
 CollabDocs provides a tiered utility system where editors can manage, secure, and export their content seamlessly.
 
+![Use Case Diagram](./client/public/assets/diagrams/use_case_diagram.png)
+
 ```mermaid
 graph LR
     User((Registered User))
@@ -81,6 +85,8 @@ graph LR
 ## 3. Sequence Diagram (Real-Time Synchronization)
 
 The heartbeat of CollabDocs is its **Conflict-free Replicated Data Type (CRDT)** synchronization engine, ensuring that no edits are lost, even under high-concurrency.
+
+![Sequence Diagram](./client/public/assets/diagrams/sequence_diagram.png)
 
 ```mermaid
 sequenceDiagram
