@@ -160,9 +160,9 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500">
+    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500 relative">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 p-3 bg-gray-50/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 sticky top-0 z-20 rounded-t-xl">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
@@ -241,41 +241,53 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
             <span className="text-xs font-bold whitespace-nowrap">
               {isExporting ? 'Exporting...' : 'Export'}
             </span>
-            <SafeIcon icon={ChevronDown} size={12} className={`transition-transform duration-200 ${showExportDropdown ? 'rotate-180' : ''}`} />
+            <SafeIcon icon={ChevronDown} size={12} className={`transition-transform duration-300 ${showExportDropdown ? 'rotate-180' : ''}`} />
           </button>
 
           {showExportDropdown && (
-            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-xl rounded-xl z-[60] overflow-hidden">
-              <div className="px-3 py-2 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500">Choose Format</span>
+            <div className="absolute top-full right-0 mt-2 w-56 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-gray-100 dark:border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] rounded-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="px-4 py-3 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500 flex items-center gap-2">
+                  <Download size={10} />
+                  Format Selection
+                </span>
               </div>
-              <div className="p-1">
+              <div className="p-1.5">
                 <button
                   onClick={handleExportPDF}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
                 >
-                  <div className="p-1.5 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-md">
-                    <SafeIcon icon={File} size={14} />
+                  <div className="p-2 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-lg group-hover/item:scale-110 transition-transform">
+                    <SafeIcon icon={File} size={16} />
                   </div>
-                  <span>PDF Document</span>
+                  <div className="flex flex-col">
+                    <span className="font-bold">PDF Document</span>
+                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Perfect for sharing</span>
+                  </div>
                 </button>
                 <button
                   onClick={handleExportWord}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
                 >
-                  <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-md">
-                    <SafeIcon icon={File} size={14} />
+                  <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg group-hover/item:scale-110 transition-transform">
+                    <SafeIcon icon={File} size={16} />
                   </div>
-                  <span>Word (.doc)</span>
+                  <div className="flex flex-col">
+                    <span className="font-bold">Word (.doc)</span>
+                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Editable format</span>
+                  </div>
                 </button>
                 <button
                   onClick={handleExportText}
-                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                  className="w-full group/item flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl transition-all text-left font-medium active:scale-[0.98]"
                 >
-                  <div className="p-1.5 bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 rounded-md">
-                    <SafeIcon icon={FileText} size={14} />
+                  <div className="p-2 bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 rounded-lg group-hover/item:scale-110 transition-transform">
+                    <SafeIcon icon={FileText} size={16} />
                   </div>
-                  <span>Plain Text</span>
+                  <div className="flex flex-col">
+                    <span className="font-bold">Plain Text</span>
+                    <span className="text-[10px] text-gray-400 dark:text-slate-500">Raw content only</span>
+                  </div>
                 </button>
               </div>
             </div>
