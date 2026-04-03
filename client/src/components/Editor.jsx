@@ -8,9 +8,9 @@ import UnderlineExtension from '@tiptap/extension-underline';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import {
-  Bold, Italic, Underline, List, ListOrdered,
+  Bold, Italic, Underline, Strikethrough, List, ListOrdered,
   Quote, RotateCcw, RotateCw, Save, Info, AlertTriangle,
-  Download, Loader2
+  Download, Loader2, ChevronDown, File, FileText
 } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 
@@ -132,6 +132,13 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
         >
           <SafeIcon icon={Underline} size={18} />
         </button>
+        <button
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('strike') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
+          title="Strikethrough"
+        >
+          <SafeIcon icon={Strikethrough} size={18} />
+        </button>
         <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -196,7 +203,12 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
 
       {/* Editor Content */}
       <div className="p-0 sm:p-4 bg-gray-50 dark:bg-slate-950 flex-grow min-h-[85vh] transition-colors duration-300">
-        <EditorContent editor={editor} className="max-w-screen-md mx-auto" />
+        <div className="max-w-screen-md mx-auto bg-white dark:bg-slate-900 min-h-full p-8 shadow-sm rounded-lg border border-gray-100 dark:border-slate-800">
+          <EditorContent 
+            editor={editor} 
+            className="prose prose-slate dark:prose-invert max-w-none focus:outline-none" 
+          />
+        </div>
       </div>
 
       {/* Status Bar */}
