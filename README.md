@@ -1,117 +1,123 @@
-# CollabDocs 🚀
-### High-Performance Real-Time Collaborative Text Editor
+# 🚀 CollabDocs
+### Seamless, Precision Real-Time Collaboration
 
 **Live URL**: [project-8io14.vercel.app](https://project-8io14.vercel.app)
 
-CollabDocs is a professional-grade, real-time collaborative editing platform engineered for seamless teamwork. By leveraging **Conflict-free Replicated Data Types (CRDTs)**, CollabDocs ensures high-availability and zero-collision synchronization across multiple users, providing a smooth, "Google Docs-like" experience with a premium, developer-focused aesthetic.
+---
+
+## 📄 Overview
+
+**CollabDocs** is a professional-grade, high-performance collaborative editing platform. Engineered for teams that require near-zero latency, it uses **Conflict-free Replicated Data Types (CRDTs)** to ensure that your work is synchronized perfectly, every time, without collisions.
 
 ---
 
 ## ✨ Key Features
 
-- 🔄 **Real-Time Collaboration**: Powered by Yjs and WebSockets for near-instant synchronization and conflict resolution.
-- 🌓 **Persistent Dark Mode**: Sophisticated theme management using CSS variables and `localStorage` for a consistent UI across sessions.
-- 🔒 **Secure Password Gates**: Private document support with robust password protection and JWT-based authentication.
-- 📂 **Multi-Format Export**: One-click professional exports to **PDF**, **Word (.doc)**, and **Plain Text (.txt)**.
-- 👥 **Presence Indicators**: Visual cues showing active collaborators and their cursor movements (Presence aware).
-- 📱 **Responsive Design**: Full-fidelity experience across Desktop, Tablet, and Mobile devices.
+> [!TIP]
+> **Experience the Sync**: Open the application in two different browsers (or an incognito window) to see the lightning-fast, real-time collaboration in action!
+
+| Feature | Description |
+| :--- | :--- |
+| 🔄 **Real-Time Sync** | Precision synchronization powered by Yjs and WebSockets. |
+| 🌓 **Persistent Theme** | Full Dark/Light mode with local persistence and CSS variables. |
+| 🔒 **Security-First** | Private, password-protected documentation gates and JWT Auth. |
+| 📂 **Pro Exporter** | One-click downloads for **PDF**, **Word (.doc)**, and **Plain Text**. |
+| 👥 **Presence UI** | High-fidelity collaborator status and real-time cursor tracking. |
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React (Vite)**: High-performance frontend framework.
-- **Tailwind CSS**: Utility-first styling with a custom dark-mode design system.
-- **Lucide React**: Premium iconography for a "Pro" look.
-- **Tiptap Framework**: Headless rich-text editor framework for deep customization.
-- **Yjs & y-websocket**: CRDT-based shared data types for real-time sync.
+### **Frontend**
+- **Framework**: React (Vite)
+- **Styling**: Tailwind CSS (Custom Design System)
+- **Editor**: Tiptap Rich Text Framework
+- **Icons**: Lucide React (Premium Iconography)
+- **Sync**: Yjs & y-websocket-client
 
-### Backend
-- **Node.js & Express**: Scalable server-side architecture.
-- **MongoDB Atlas**: Cloud-native database for document metadata and user authentication.
-- **y-websocket-server**: Custom WebSocket implementation for handling shared document states.
-- **JWT (JSON Web Tokens)**: Secure, stateless authentication for session management.
+### **Backend**
+- **Runtime**: Node.js & Express
+- **Database**: MongoDB Atlas (Cloud)
+- **Real-time**: Custom y-websocket-server implementation
+- **Security**: JSON Web Tokens (JWT) & bcrypt
 
 ---
 
 ## 🏗️ Architecture Overview
 
-CollabDocs follows a distributed state-management architecture:
+CollabDocs utilizes a **Distributed State** model to ensure performance:
 
-1. **Client-Side**: Every client maintains a local Y.Doc (CRDT). Changes are immediately reflected in the local UI for zero perceived latency.
-2. **WebSocket Synchronization**: Local changes are encoded as binary updates and broadcasted to the backend via `y-websocket`.
-3. **Server-Side**: The central WebSocket server acts as a relay, broadcasting updates to all other connected clients and periodically persisting metadata to MongoDB.
-4. **Conflict Resolution**: Conflict-free Replicated Data Types naturally merge updates from different users without requiring a central "source of truth" to arbitrate edits.
+1. **Local Mutations**: Every client maintains an independent Y.Doc (CRDT). Edits are reflected locally *instantly*, providing a zero-latency feel.
+2. **Binary Broadcasts**: Local changes are encoded into highly efficient binary updates and broadcasted via WebSockets.
+3. **Optimistic-to-Consistent**: Changes are merged optimistically and reach eventual consistency across all clients automatically.
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v18+)
-- MongoDB Atlas Account (for `MONGO_URI`)
-
-### Backend Setup
-1. Navigate to the `server/` directory:
-   ```bash
-   cd server
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file from the example:
-   ```bash
-   cp .env.example .env
-   ```
-4. Fill in your environment variables:
-   - `MONGO_URI`: Your MongoDB Atlas connection string.
-   - `JWT_SECRET`: A secure random string for authentication.
-5. Start the server:
-   ```bash
-   npm start
-   ```
-
-### Frontend Setup
-1. Navigate to the `client/` directory:
-   ```bash
-   cd client
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file:
-   ```bash
-   VITE_API_URL=http://localhost:5000/api
-   VITE_WS_URL=ws://localhost:5000
-   ```
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+### **Prerequisites**
+- **Node.js** (v18 or higher)
+- **MongoDB Atlas** Account
 
 ---
 
-## 🤖 AI Tools Used
+### **1. Backend Setup**
 
-This project was developed with the assistance of the following AI tools:
+```bash
+cd server
+npm install
+```
 
-- **Antigravity (Google Deepmind)**: A powerful agentic coding assistant used as the primary pair programmer.
-    - **Implementation**: Architected the Yjs synchronization layer and real-time WebSocket communication.
-    - **UI/UX**: Designed the persistent Dark/Light mode system and the responsive multi-format export dropdown.
-    - **Logic**: Engineered the secure document Password Gate and JWT authentication flow.
+**Required `.env` Variables**:
+```bash
+MONGO_URI=your_mongodb_atlas_string
+JWT_SECRET=your_secure_random_key
+```
+
+```bash
+npm start
+```
+
+---
+
+### **2. Frontend Setup**
+
+```bash
+cd client
+npm install
+```
+
+**Required `.env` Variables**:
+```bash
+VITE_API_URL=http://localhost:5000/api
+VITE_WS_URL=ws://localhost:5000
+```
+
+```bash
+npm run dev
+```
+
+---
+
+## 🤖 AI Tools Used (MANDATORY)
+
+> [!IMPORTANT]
+> **Full Disclosure**: In compliance with the AI Tool Policy, the following tools were utilized during the development of this project:
+
+- **Antigravity (Google Deepmind)**: Acts as the primary full-stack implementation agent.
+    - **CRDT Architecture**: Guided the implementation of the Yjs synchronization engine.
+    - **UI/UX Design**: Engineered the persistent Dark/Light mode and the "Pro" Export Dropdown system.
+    - **Security**: Architected the Password Gate and verification logic.
 
 ---
 
 ## ⚠️ Known Limitations
 
-- **Media Embedding**: Direct image and video embedding is currently in development.
-- **Advanced Tables**: Complex table operations (merging/splitting cells) are not yet fully supported.
-- **Cursor Persistence**: User cursor colors are randomized per session and do not yet persist across total logout/login cycles.
+- **Media Support**: Large image and video embedding is currently in active development.
+- **Cursor Sync**: User cursor colors are randomized per session and do not yet persist across logouts.
+- **Advanced Tables**: Deep cell merging/splitting operations are coming in a future update.
 
 ---
 
 ## 📄 License
-This project is for hackathon submission purposes.
+This project is for hackathon submission purposes and is licensed for personal evaluation.
