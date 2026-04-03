@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, LogOut, Trash2 } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Dashboard = () => {
   const [documents, setDocuments] = useState([]);
@@ -30,8 +31,7 @@ const Dashboard = () => {
 
   const fetchDocuments = async (token) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/documents`, {
+      const response = await fetch(`${API_URL}/documents`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -59,8 +59,7 @@ const Dashboard = () => {
       const title = inputTitle.trim() || `Untitled Document ${documents.length + 1}`;
       const token = localStorage.getItem('token');
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/documents`, {
+      const response = await fetch(`${API_URL}/documents`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -82,8 +81,7 @@ const Dashboard = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/documents/${id}`, {
+      const response = await fetch(`${API_URL}/documents/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

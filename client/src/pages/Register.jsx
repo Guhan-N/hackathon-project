@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FileText, Lock, Mail, User } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -19,8 +20,7 @@ const Register = () => {
     setSuccessMsg('');
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/auth/register`, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

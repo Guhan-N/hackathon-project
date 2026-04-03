@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { API_URL } from '../config';
 
 const VerifyEmail = () => {
   const { token } = useParams();
@@ -10,8 +11,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-        const response = await fetch(`${apiUrl}/auth/verify/${token}`);
+        const response = await fetch(`${API_URL}/auth/verify/${token}`);
         const data = await response.json();
 
         if (response.ok) {

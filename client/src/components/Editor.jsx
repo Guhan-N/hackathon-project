@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { WS_URL } from '../config';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Collaboration } from '@tiptap/extension-collaboration';
@@ -167,10 +168,9 @@ const Editor = ({ docId, username, onProviderReady }) => {
     
     try {
       const doc = new Y.Doc();
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5000';
       console.log(`[Editor] Initializing connection for ${docId}`);
       
-      const prov = new WebsocketProvider(wsUrl, docId, doc);
+      const prov = new WebsocketProvider(WS_URL, docId, doc);
       
       prov.on('status', event => {
         console.log(`[Editor] Connection status for ${docId}:`, event.status);

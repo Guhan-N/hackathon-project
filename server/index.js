@@ -10,7 +10,10 @@ const app = express();
 const server = http.createServer(app);
 
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+  credentials: true
+}));
 app.use(express.json());
 
 // MongoDB connection

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FileText, Link2, ArrowLeft } from 'lucide-react';
+import { API_URL } from '../config';
 import Editor from '../components/Editor';
 import Presence from '../components/Presence';
 
@@ -20,8 +21,7 @@ const DocumentEditor = () => {
 
     const fetchDocumentData = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-        const response = await fetch(`${apiUrl}/documents/${id}`, {
+        const response = await fetch(`${API_URL}/documents/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
