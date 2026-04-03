@@ -167,7 +167,7 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   }
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500">
+    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500 relative">
       {/* Toolbar */}
       <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-x-auto no-scrollbar">
         <button
