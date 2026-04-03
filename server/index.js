@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const http = require('http');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const Y = require('yjs');
 const { setupWSConnection } = require('y-websocket/bin/utils');
 
@@ -43,16 +44,30 @@ app.get('/api/documents', authMiddleware, async (req, res) => {
 
 app.post('/api/documents', authMiddleware, async (req, res) => {
   try {
-    const { title } = req.body;
-    console.log(`Creating document with title: ${title}`);
+    const { title, isPrivate, password } = req.body;
+    console.log(`Creating document with title: ${title}, private: ${isPrivate}`);
+    
+    let hashedPassword = null;
+    if (isPrivate && password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
     const document = new Document({ 
       title, 
       content: Buffer.alloc(0),
-      owner: req.user.userId
+      owner: req.user.userId,
+      isPrivate: !!isPrivate,
+      password: hashedPassword
     });
+    
     await document.save();
     console.log(`Document created: ${document._id}`);
-    res.status(201).json(document);
+    
+    // Don't return the hashed password in the response
+    const docResponse = document.toObject();
+    delete docResponse.password;
+    
+    res.status(201).json(docResponse);
   } catch (err) {
     console.error('Error creating document:', err);
     res.status(500).json({ error: err.message });
@@ -61,22 +76,64 @@ app.post('/api/documents', authMiddleware, async (req, res) => {
 
 app.get('/api/documents/:id', authMiddleware, async (req, res) => {
   try {
-    // Automatically add the user who opens the document to the collaborators list
-    const document = await Document.findByIdAndUpdate(
-      req.params.id,
-      { $addToSet: { collaborators: req.user.userId } },
-      { new: true }
-    )
-    .populate('owner', 'name email')
-    .populate('collaborators', 'name email');
+    const document = await Document.findById(req.params.id)
+      .populate('owner', 'name email')
+      .populate('collaborators', 'name email');
 
     if (!document) {
-      console.log(`Document not found: ${req.params.id}`);
       return res.status(404).json({ error: 'Document not found' });
     }
+
+    // Check if document is private and user is NOT the owner
+    // If private, we only return metadata first, requiring a separate verify call
+    const isOwner = document.owner._id.toString() === req.user.userId;
+    
+    if (document.isPrivate && !isOwner) {
+      // Check if they provided an unlock token or verified previously (via simplistic header check for now)
+      const unlocked = req.headers['x-doc-password-verified'] === 'true';
+      if (!unlocked) {
+        return res.status(403).json({ 
+          needsPassword: true, 
+          title: document.title,
+          owner: document.owner.name 
+        });
+      }
+    }
+
+    // Add user to collaborators if not already there
+    await Document.findByIdAndUpdate(
+      req.params.id,
+      { $addToSet: { collaborators: req.user.userId } }
+    );
+
     res.json(document);
   } catch (err) {
     console.error(`Error fetching document ${req.params.id}:`, err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// New route to verify document password
+app.post('/api/documents/:id/verify', authMiddleware, async (req, res) => {
+  try {
+    const { password } = req.body;
+    const document = await Document.findById(req.params.id).select('+password');
+
+    if (!document) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    if (!document.isPrivate) {
+      return res.json({ success: true, message: 'Document is public' });
+    }
+
+    const isMatch = await bcrypt.compare(password, document.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

@@ -25,6 +25,14 @@ const DocumentSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  isPrivate: {
+    type: Boolean,
+    default: false
+  },
+  password: {
+    type: String,
+    select: false // Don't return the password in standard queries
   }
 });
 

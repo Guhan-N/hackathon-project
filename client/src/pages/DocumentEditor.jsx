@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FileText, Link2, ArrowLeft } from 'lucide-react';
+import { FileText, Link2, ArrowLeft, Lock } from 'lucide-react';
 import { API_URL } from '../config';
 import Editor from '../components/Editor';
 import Presence from '../components/Presence';
+import PasswordGate from '../components/PasswordGate';
 
 const DocumentEditor = () => {
   const { id } = useParams();
@@ -11,36 +12,49 @@ const DocumentEditor = () => {
   const [document, setDocument] = useState(null);
   const [provider, setProvider] = useState(null);
   const [username] = useState(localStorage.getItem('username') || 'Anonymous');
+  const [isLocked, setIsLocked] = useState(false);
+  const [unlockPassword, setUnlockPassword] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchDocumentData = async (password = '') => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
       return;
     }
 
-    const fetchDocumentData = async () => {
-      try {
-        const response = await fetch(`${API_URL}/documents/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          if (response.status === 401) {
-            navigate('/login');
-          }
-          throw new Error('Failed to load document');
-        }
-        
-        const data = await response.json();
-        setDocument(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    setLoading(true);
+    try {
+      const headers = { 'Authorization': `Bearer ${token}` };
+      if (password) headers['x-doc-password-verified'] = 'true';
 
+      const response = await fetch(`${API_URL}/documents/${id}`, { headers });
+      
+      if (!response.ok) {
+        if (response.status === 403) {
+          const data = await response.json();
+          if (data.needsPassword) {
+            setDocument({ title: data.title, id: id }); // Store minimal metadata
+            setIsLocked(true);
+            return;
+          }
+        }
+        if (response.status === 401) navigate('/login');
+        throw new Error('Failed to load document');
+      }
+      
+      const data = await response.json();
+      setDocument(data);
+      setIsLocked(false);
+      if (password) setUnlockPassword(password);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDocumentData();
   }, [id, navigate]);
 
@@ -58,8 +72,9 @@ const DocumentEditor = () => {
           <div className="w-[1px] h-6 bg-gray-200"></div>
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-primary-500" />
-            <h1 className="text-base sm:text-lg font-bold text-gray-800 truncate max-w-[120px] sm:max-w-xs px-1">
+            <h1 className="text-base sm:text-lg font-bold text-gray-800 truncate max-w-[120px] sm:max-w-xs px-1 flex items-center gap-2">
               {document ? document.title : 'Loading...'}
+              {isLocked && <Lock size={12} className="text-amber-500" />}
             </h1>
           </div>
         </div>
@@ -84,7 +99,19 @@ const DocumentEditor = () => {
       </header>
 
       <main className="p-4 sm:p-8 flex-grow">
-        <Editor key={id} docId={id} username={username} onProviderReady={setProvider} />
+        {loading ? (
+          <div className="flex items-center justify-center p-20">
+            <div className="w-10 h-10 border-4 border-primary-100 border-t-primary-600 rounded-full animate-spin"></div>
+          </div>
+        ) : isLocked ? (
+          <PasswordGate 
+            docId={id} 
+            docTitle={document?.title} 
+            onUnlock={(pass) => fetchDocumentData(pass)} 
+          />
+        ) : (
+          <Editor key={id} docId={id} username={username} onProviderReady={setProvider} />
+        )}
       </main>
     </div>
   );

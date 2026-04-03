@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Plus, LogOut, Trash2 } from 'lucide-react';
+import { FileText, Plus, LogOut, Trash2, Lock, Globe } from 'lucide-react';
 import { API_URL } from '../config';
+import CreateDocModal from '../components/CreateDocModal';
 
 const Dashboard = () => {
   const [documents, setDocuments] = useState([]);
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const getUserIdFromToken = (token) => {
@@ -51,12 +53,8 @@ const Dashboard = () => {
     }
   };
 
-  const createDocument = async () => {
+  const handleCreateDocument = async ({ title, isPrivate, password }) => {
     try {
-      const inputTitle = window.prompt("Enter document name:", `Untitled Document ${documents.length + 1}`);
-      if (inputTitle === null) return; // User cancelled
-      
-      const title = inputTitle.trim() || `Untitled Document ${documents.length + 1}`;
       const token = localStorage.getItem('token');
 
       const response = await fetch(`${API_URL}/documents`, {
@@ -65,8 +63,10 @@ const Dashboard = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({ title, isPrivate, password }),
       });
+      
+      if (!response.ok) throw new Error('Failed to create document');
       
       const newDoc = await response.json();
       setDocuments([...documents, newDoc]);
@@ -120,7 +120,7 @@ const Dashboard = () => {
           <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white">
             <FileText size={16} />
           </div>
-          <span className="text-lg">CollabDocs</span>
+          <span className="text-lg">CollabDocs DEBUG</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm font-medium text-gray-600 hidden sm:block">Hello, {username}</span>
@@ -135,14 +135,18 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="flex-grow p-6 sm:p-12 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in">
+      <main className="flex-grow p-6 sm:p-12 max-w-5xl mx-auto w-full space-y-8">
         <div className="flex justify-between items-end">
           <div className="space-y-1">
             <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Documents</h2>
             <p className="text-sm text-gray-500">Pick a file or create a new one to begin</p>
           </div>
           <button
-            onClick={createDocument}
+            onClick={() => {
+              console.log('New Doc button clicked');
+              alert('New Doc Button Clicked!');
+              setIsModalOpen(true);
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg shadow-md transition-all active:scale-95"
           >
             <Plus size={16} />
@@ -150,13 +154,27 @@ const Dashboard = () => {
           </button>
         </div>
 
+        <CreateDocModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          onCreate={handleCreateDocument} 
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {documents.length === 0 ? (
             <div className="col-span-full py-20 text-center space-y-4 border-2 border-dashed border-gray-200 rounded-3xl">
               <FileText size={48} className="mx-auto text-gray-200" />
               <div className="space-y-1">
                 <p className="text-gray-400 font-medium">No documents yet</p>
-                <button onClick={createDocument} className="text-primary-600 hover:text-primary-700 font-bold text-sm">Create your first document</button>
+                <button 
+                  onClick={() => {
+                    alert('Empty State Button Clicked!');
+                    setIsModalOpen(true);
+                  }} 
+                  className="text-primary-600 hover:text-primary-700 font-bold text-sm"
+                >
+                  Create your first document
+                </button>
               </div>
             </div>
           ) : (
@@ -171,7 +189,8 @@ const Dashboard = () => {
                     <FileText size={20} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="text-[10px] uppercase tracking-widest font-bold text-gray-300">
+                    <div className="text-[10px] uppercase tracking-widest font-bold text-gray-300 flex items-center gap-2">
+                      {doc.isPrivate ? <Lock size={10} className="text-amber-500" /> : <Globe size={10} />}
                       ID: {doc._id.slice(-4)}
                     </div>
                     {doc.owner === currentUserId && (
