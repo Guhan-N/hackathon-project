@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FileText, Lock, Mail, User } from 'lucide-react';
 import { API_URL } from '../config';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -48,31 +49,34 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 dark:bg-slate-950 p-6 transition-colors duration-300 relative">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-xl p-8 space-y-8">
         <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center text-primary-600 mb-4">
+          <div className="mx-auto w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center text-primary-600 mb-4">
             <FileText size={24} />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-sm text-gray-500">Join to collaborate in real-time</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Create Account</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 font-medium">Join to collaborate in real-time</p>
         </div>
 
         {error && (
-          <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg text-center font-medium">
+          <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-lg text-center font-medium">
             {error}
           </div>
         )}
         
         {successMsg && (
-          <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg text-center font-medium">
+          <div className="p-3 text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 rounded-lg text-center font-medium">
             {successMsg}
           </div>
         )}
 
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Full Name</label>
+            <label className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Full Name</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <User size={16} />
@@ -82,14 +86,14 @@ const Register = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Satoshi Nakamoto"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 dark:text-white border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-slate-600"
                 required
               />
             </div>
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Email Address</label>
+            <label className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Email Address</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <Mail size={16} />
@@ -99,14 +103,14 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 dark:text-white border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-slate-600"
                 required
               />
             </div>
           </div>
           
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Password</label>
+            <label className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">Password</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                 <Lock size={16} />
@@ -116,7 +120,7 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 dark:text-white border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-400 focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-slate-600"
                 required
                 minLength={6}
               />
@@ -132,9 +136,9 @@ const Register = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 font-medium">
+        <p className="text-center text-sm text-gray-500 dark:text-slate-400 font-medium pt-2">
           Already have an account?{' '}
-          <Link to="/login" className="text-primary-600 hover:text-primary-700 transition-colors">
+          <Link to="/login" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 font-bold transition-colors">
             Sign in
           </Link>
         </p>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, LogOut, Trash2, Lock, Globe } from 'lucide-react';
 import { API_URL } from '../config';
 import CreateDocModal from '../components/CreateDocModal';
+import ThemeToggle from '../components/ThemeToggle';
 
 const Dashboard = () => {
   const [documents, setDocuments] = useState([]);
@@ -114,17 +115,19 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex flex-col">
-      <header className="px-6 py-4 bg-white border-b border-gray-200 flex justify-between items-center shadow-sm">
-        <div className="flex items-center gap-2 font-bold text-gray-900">
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-slate-950 flex flex-col transition-colors duration-300">
+      <header className="px-6 py-4 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 flex justify-between items-center shadow-sm">
+        <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
           <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white">
             <FileText size={16} />
           </div>
           <span className="text-lg">CollabDocs</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm font-medium text-gray-600 hidden sm:block">Hello, {username}</span>
-          <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
+          <ThemeToggle />
+          <div className="w-px h-6 bg-gray-200 dark:bg-slate-800 hidden sm:block"></div>
+          <span className="text-sm font-medium text-gray-600 dark:text-slate-400 hidden sm:block">Hello, {username}</span>
+          <div className="w-px h-6 bg-gray-200 dark:bg-slate-800 hidden sm:block"></div>
           <button
             onClick={handleLogout}
             className="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
@@ -138,8 +141,8 @@ const Dashboard = () => {
       <main className="flex-grow p-6 sm:p-12 max-w-5xl mx-auto w-full space-y-8">
         <div className="flex justify-between items-end">
           <div className="space-y-1">
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Documents</h2>
-            <p className="text-sm text-gray-500">Pick a file or create a new one to begin</p>
+            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Documents</h2>
+            <p className="text-sm text-gray-500 dark:text-slate-400">Pick a file or create a new one to begin</p>
           </div>
           <button
             onClick={() => {
@@ -160,10 +163,10 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {documents.length === 0 ? (
-            <div className="col-span-full py-20 text-center space-y-4 border-2 border-dashed border-gray-200 rounded-3xl">
-              <FileText size={48} className="mx-auto text-gray-200" />
+            <div className="col-span-full py-20 text-center space-y-4 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-3xl">
+              <FileText size={48} className="mx-auto text-gray-200 dark:text-slate-800" />
               <div className="space-y-1">
-                <p className="text-gray-400 font-medium">No documents yet</p>
+                <p className="text-gray-400 dark:text-slate-500 font-medium">No documents yet</p>
                 <button
                   onClick={() => {
                     setIsModalOpen(true);
@@ -179,14 +182,14 @@ const Dashboard = () => {
               <div
                 key={doc._id}
                 onClick={() => navigate(`/document/${doc._id}`)}
-                className="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary-100 cursor-pointer transition-all group scale-100 hover:scale-[1.02] relative"
+                className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-xl hover:border-primary-100 dark:hover:border-primary-900/50 cursor-pointer transition-all group scale-100 hover:scale-[1.02] relative"
               >
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-2.5 bg-gray-50 text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-500 rounded-xl transition-colors">
+                  <div className="p-2.5 bg-gray-50 dark:bg-slate-800 text-gray-400 dark:text-slate-500 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20 group-hover:text-primary-500 rounded-xl transition-colors">
                     <FileText size={20} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="text-[10px] uppercase tracking-widest font-bold text-gray-300 flex items-center gap-2">
+                    <div className="text-[10px] uppercase tracking-widest font-bold text-gray-300 dark:text-slate-600 flex items-center gap-2">
                       {doc.isPrivate ? <Lock size={10} className="text-amber-500" /> : <Globe size={10} />}
                       ID: {doc._id.slice(-4)}
                     </div>
@@ -204,8 +207,8 @@ const Dashboard = () => {
                     )}
                   </div>
                 </div>
-                <h3 className="font-bold text-gray-800 text-lg group-hover:text-primary-600 transition-colors truncate">{doc.title}</h3>
-                <p className="text-[10px] text-gray-400 font-medium flex items-center gap-1 mt-1">
+                <h3 className="font-bold text-gray-800 dark:text-white text-lg group-hover:text-primary-600 transition-colors truncate">{doc.title}</h3>
+                <p className="text-[10px] text-gray-400 dark:text-slate-500 font-medium flex items-center gap-1 mt-1">
                   Updated {new Date(doc.updatedAt).toLocaleDateString()}
                 </p>
               </div>

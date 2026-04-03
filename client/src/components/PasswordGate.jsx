@@ -41,22 +41,22 @@ const PasswordGate = ({ docId, docTitle, onUnlock }) => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white border border-gray-100 rounded-3xl shadow-2xl p-10 space-y-8">
+    <div className="min-h-[80vh] flex items-center justify-center p-6 transition-colors duration-300">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-3xl shadow-2xl p-10 space-y-8">
         <div className="text-center space-y-4">
-          <div className="mx-auto w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 shadow-inner">
+          <div className="mx-auto w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center text-amber-500 shadow-inner">
             <Lock size={36} />
           </div>
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Protected Workspace</h2>
-            <p className="text-sm text-gray-400 font-medium">
-              "<span className="text-gray-600 font-bold">{docTitle}</span>" is a private document.
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Protected Workspace</h2>
+            <p className="text-sm text-gray-400 dark:text-slate-500 font-medium">
+              "<span className="text-gray-600 dark:text-slate-300 font-bold">{docTitle}</span>" is a private document.
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 text-red-600 text-sm font-bold">
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-bold">
             <ShieldAlert size={18} />
             {error}
           </div>
@@ -64,13 +64,13 @@ const PasswordGate = ({ docId, docTitle, onUnlock }) => {
 
         <form onSubmit={handleUnlock} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Workspace Password</label>
+            <label className="text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">Workspace Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 transition-all outline-none text-center text-lg font-bold tracking-widest placeholder:tracking-normal"
+              className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 dark:text-white border-none rounded-2xl focus:ring-2 focus:ring-primary-500 transition-all outline-none text-center text-lg font-bold tracking-widest placeholder:tracking-normal"
               autoFocus
             />
           </div>
@@ -93,7 +93,7 @@ const PasswordGate = ({ docId, docTitle, onUnlock }) => {
             
             <Link 
               to="/dashboard"
-              className="flex items-center justify-center gap-2 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors py-2"
+              className="flex items-center justify-center gap-2 text-sm font-bold text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors py-2"
             >
               <ArrowLeft size={14} />
               Return to Dashboard

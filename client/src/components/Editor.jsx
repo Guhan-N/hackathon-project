@@ -100,81 +100,81 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
 
   if (!editor || extensions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 bg-white rounded-3xl shadow-sm border border-gray-100 space-y-4 max-w-4xl mx-auto">
-        <div className="w-10 h-10 border-4 border-primary-50 border-t-primary-600 rounded-full animate-spin"></div>
-        <p className="text-sm font-bold text-gray-500 tracking-tight">Finalizing sync details...</p>
+      <div className="flex flex-col items-center justify-center p-20 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-4 max-w-4xl mx-auto">
+        <div className="w-10 h-10 border-4 border-primary-50 dark:border-primary-900/30 border-t-primary-600 rounded-full animate-spin"></div>
+        <p className="text-sm font-bold text-gray-500 dark:text-slate-400 tracking-tight">Finalizing sync details...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100 animate-in fade-in duration-500">
+    <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50 border-b border-gray-200 sticky top-0 z-10 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-x-auto no-scrollbar">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('bold') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
           title="Bold (Ctrl+B)"
         >
           <SafeIcon icon={Bold} size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('italic') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
           title="Italic (Ctrl+I)"
         >
           <SafeIcon icon={Italic} size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('underline') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('underline') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
           title="Underline (Ctrl+U)"
         >
           <SafeIcon icon={Underline} size={18} />
         </button>
-        <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+        <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('bulletList') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
         >
           <SafeIcon icon={List} size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('orderedList') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
         >
           <SafeIcon icon={ListOrdered} size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded hover:bg-gray-200 transition-colors ${editor.isActive('blockquote') ? 'bg-gray-200 text-primary-600' : 'text-gray-600'}`}
+          className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('blockquote') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
         >
           <SafeIcon icon={Quote} size={18} />
         </button>
-        <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+        <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         <button
           onClick={() => editor.chain().focus().undo().run()}
-          className="p-2 rounded hover:bg-gray-200 text-gray-600 transition-colors"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 text-gray-600 dark:text-slate-400 transition-colors"
           disabled={!editor.can().undo()}
         >
           <SafeIcon icon={RotateCcw} size={18} />
         </button>
         <button
           onClick={() => editor.chain().focus().redo().run()}
-          className="p-2 rounded hover:bg-gray-200 text-gray-600 transition-colors"
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 text-gray-600 dark:text-slate-400 transition-colors"
           disabled={!editor.can().redo()}
         >
           <SafeIcon icon={RotateCw} size={18} />
         </button>
         
-        <div className="w-[1px] h-6 bg-gray-300 mx-1"></div>
+        <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         
         <button
           onClick={handleExportPDF}
           className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
             isExporting 
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' 
-            : 'bg-white text-primary-600 border-primary-100 hover:bg-primary-50 hover:border-primary-200 shadow-sm'
+            ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed border-gray-200 dark:border-slate-700' 
+            : 'bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 border-primary-100 dark:border-primary-900/30 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:border-primary-200 shadow-sm'
           }`}
           disabled={isExporting}
           title="Export to PDF"
@@ -189,22 +189,22 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
           </span>
         </button>
         
-        <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 font-medium px-2">
+        <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 font-medium px-2">
           <SafeIcon icon={Save} size={14} className="text-green-500" />
           <span>Autosaved</span>
         </div>
       </div>
 
       {/* Editor Content */}
-      <div className="p-0 sm:p-4 bg-gray-50 flex-grow min-h-[85vh]">
+      <div className="p-0 sm:p-4 bg-gray-50 dark:bg-slate-950 flex-grow min-h-[85vh] transition-colors duration-300">
         <EditorContent editor={editor} className="max-w-screen-md mx-auto" />
       </div>
 
       {/* Status Bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-t border-gray-200 text-[10px] sm:text-xs text-gray-500">
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 text-[10px] sm:text-xs text-gray-500 dark:text-slate-400">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span>Connected as <strong>{username}</strong></span>
+          <span>Connected as <strong className="dark:text-slate-200">{username}</strong></span>
         </div>
         <div className="hidden sm:flex items-center gap-4">
           <span>Writing...</span>
@@ -260,13 +260,13 @@ const Editor = ({ docId, username, onProviderReady }) => {
 
   if (error) {
     return (
-      <div className="max-w-md mx-auto p-8 text-center bg-white rounded-3xl shadow-sm border border-red-50 space-y-4">
-        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 mx-auto">
+      <div className="max-w-md mx-auto p-8 text-center bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-red-50 dark:border-red-900/30 space-y-4">
+        <div className="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center text-red-600 mx-auto">
           <Info size={24} />
         </div>
         <div className="space-y-1">
-          <h3 className="font-bold text-gray-900">Sync Error</h3>
-          <p className="text-sm text-gray-500">{error}</p>
+          <h3 className="font-bold text-gray-900 dark:text-white">Sync Error</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400">{error}</p>
         </div>
         <button onClick={() => window.location.reload()} className="px-4 py-2 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors">
           Try Again
@@ -277,16 +277,16 @@ const Editor = ({ docId, username, onProviderReady }) => {
 
   if (!isReady || !ydocRef.current || !providerRef.current) {
     return (
-      <div className="flex flex-col items-center justify-center p-20 bg-white rounded-3xl shadow-sm border border-gray-100 space-y-6 max-w-4xl mx-auto">
+      <div className="flex flex-col items-center justify-center p-20 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-800 space-y-6 max-w-4xl mx-auto">
         <div className="relative">
-          <div className="w-12 h-12 border-4 border-primary-50 border-t-primary-600 rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-primary-50 dark:border-primary-900/30 border-t-primary-600 rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-2 h-2 bg-primary-600 rounded-full"></div>
           </div>
         </div>
         <div className="text-center space-y-1">
-          <p className="text-sm font-bold text-gray-800">Initializing Workspace</p>
-          <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 animate-pulse">Establishing Secure Connection...</p>
+          <p className="text-sm font-bold text-gray-800 dark:text-white">Initializing Workspace</p>
+          <p className="text-[10px] uppercase tracking-widest font-bold text-gray-400 dark:text-slate-500 animate-pulse">Establishing Secure Connection...</p>
         </div>
       </div>
     );
