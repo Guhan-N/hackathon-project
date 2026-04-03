@@ -169,7 +169,7 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-100 dark:border-slate-800 animate-in fade-in duration-500 relative">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-10 overflow-visible no-scrollbar">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-slate-800 text-primary-600' : 'text-gray-600 dark:text-slate-400'}`}
