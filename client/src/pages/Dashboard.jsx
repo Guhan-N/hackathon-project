@@ -38,14 +38,14 @@ const Dashboard = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           handleLogout();
         }
         throw new Error('Failed to fetch documents');
       }
-      
+
       const data = await response.json();
       setDocuments(data);
     } catch (err) {
@@ -59,15 +59,15 @@ const Dashboard = () => {
 
       const response = await fetch(`${API_URL}/documents`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ title, isPrivate, password }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to create document');
-      
+
       const newDoc = await response.json();
       setDocuments([...documents, newDoc]);
       navigate(`/document/${newDoc._id}`);
@@ -78,7 +78,7 @@ const Dashboard = () => {
 
   const deleteDocument = async (id) => {
     if (!window.confirm('Are you sure you want to delete this document?')) return;
-    
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/documents/${id}`, {
@@ -87,7 +87,7 @@ const Dashboard = () => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 403) {
@@ -99,7 +99,7 @@ const Dashboard = () => {
         }
         return;
       }
-      
+
       setDocuments(documents.filter(doc => doc._id !== id));
     } catch (err) {
       console.error('Failed to delete document:', err);
@@ -120,12 +120,12 @@ const Dashboard = () => {
           <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white">
             <FileText size={16} />
           </div>
-          <span className="text-lg">CollabDocs DEBUG</span>
+          <span className="text-lg">CollabDocs</span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm font-medium text-gray-600 hidden sm:block">Hello, {username}</span>
           <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
-          <button 
+          <button
             onClick={handleLogout}
             className="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
           >
@@ -143,8 +143,6 @@ const Dashboard = () => {
           </div>
           <button
             onClick={() => {
-              console.log('New Doc button clicked');
-              alert('New Doc Button Clicked!');
               setIsModalOpen(true);
             }}
             className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-lg shadow-md transition-all active:scale-95"
@@ -154,10 +152,10 @@ const Dashboard = () => {
           </button>
         </div>
 
-        <CreateDocModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          onCreate={handleCreateDocument} 
+        <CreateDocModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onCreate={handleCreateDocument}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -166,11 +164,10 @@ const Dashboard = () => {
               <FileText size={48} className="mx-auto text-gray-200" />
               <div className="space-y-1">
                 <p className="text-gray-400 font-medium">No documents yet</p>
-                <button 
+                <button
                   onClick={() => {
-                    alert('Empty State Button Clicked!');
                     setIsModalOpen(true);
-                  }} 
+                  }}
                   className="text-primary-600 hover:text-primary-700 font-bold text-sm"
                 >
                   Create your first document
@@ -194,7 +191,7 @@ const Dashboard = () => {
                       ID: {doc._id.slice(-4)}
                     </div>
                     {doc.owner === currentUserId && (
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteDocument(doc._id);

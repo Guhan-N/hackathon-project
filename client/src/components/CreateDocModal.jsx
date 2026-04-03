@@ -7,8 +7,6 @@ const CreateDocModal = ({ isOpen, onClose, onCreate }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  console.log('CreateDocModal Render - isOpen:', isOpen);
-
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
