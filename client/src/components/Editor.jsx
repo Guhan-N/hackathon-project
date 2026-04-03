@@ -10,7 +10,7 @@ import { WebsocketProvider } from 'y-websocket';
 import { 
   Bold, Italic, Underline, List, ListOrdered,
   Quote, RotateCcw, RotateCw, Save, Info, AlertTriangle,
-  Download, Loader2
+  Download, Loader2, FileText, File, ChevronDown
 } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
 
@@ -63,8 +63,22 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
   const editor = useEditor({
     extensions,
   });
-
+  
   const [isExporting, setIsExporting] = useState(false);
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowExportDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getDocTitle = () => document.querySelector('h1')?.innerText || 'Collaborative-Document';
 
   const handleExportPDF = async () => {
     if (!editor || isExporting) return;
@@ -79,7 +93,7 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
     }
 
     // Get the actual document title from the page if possible
-    const docTitle = document.querySelector('h1')?.innerText || 'Collaborative-Document';
+    const docTitle = getDocTitle();
     
     const opt = {
       margin:       1,
@@ -95,7 +109,45 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
       console.error('PDF Export failed:', err);
     } finally {
       setIsExporting(false);
+      setShowExportDropdown(false);
     }
+  };
+
+  const handleExportWord = () => {
+    if (!editor) return;
+    const content = editor.getHTML();
+    const docTitle = getDocTitle();
+    
+    // Simple HTML to Word (.doc) template
+    const header = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${docTitle}</title></head><body style='font-family: Arial, sans-serif;'>`;
+    const footer = "</body></html>";
+    const sourceHTML = header + content + footer;
+    
+    const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+    const fileDownload = document.createElement("a");
+    document.body.appendChild(fileDownload);
+    fileDownload.href = source;
+    fileDownload.download = `${docTitle}.doc`;
+    fileDownload.click();
+    document.body.removeChild(fileDownload);
+    setShowExportDropdown(false);
+  };
+
+  const handleExportText = () => {
+    if (!editor) return;
+    const content = editor.getText();
+    const docTitle = getDocTitle();
+    
+    const element = document.createElement("a");
+    const file = new Blob([content], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = `${docTitle}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    setShowExportDropdown(false);
   };
 
   if (!editor || extensions.length === 0) {
@@ -169,25 +221,66 @@ const TipTapEditor = ({ ydoc, provider, username }) => {
         
         <div className="w-[1px] h-6 bg-gray-300 dark:bg-slate-800 mx-1"></div>
         
-        <button
-          onClick={handleExportPDF}
-          className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
-            isExporting 
-            ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed border-gray-200 dark:border-slate-700' 
-            : 'bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 border-primary-100 dark:border-primary-900/30 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:border-primary-200 shadow-sm'
-          }`}
-          disabled={isExporting}
-          title="Export to PDF"
-        >
-          {isExporting ? (
-            <SafeIcon icon={Loader2} size={14} className="animate-spin" />
-          ) : (
-            <SafeIcon icon={Download} size={14} className="group-hover:-translate-y-0.5 transition-transform" />
+        {/* Export Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setShowExportDropdown(!showExportDropdown)}
+            className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 active:scale-95 ${
+              isExporting 
+              ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed border-gray-200 dark:border-slate-700' 
+              : 'bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 border-primary-100 dark:border-primary-900/30 hover:bg-primary-50 dark:hover:bg-primary-900/10 hover:border-primary-200 shadow-sm'
+            }`}
+            disabled={isExporting}
+            title="Download Document"
+          >
+            {isExporting ? (
+              <SafeIcon icon={Loader2} size={14} className="animate-spin" />
+            ) : (
+              <SafeIcon icon={Download} size={14} className="group-hover:-translate-y-0.5 transition-transform" />
+            )}
+            <span className="text-xs font-bold whitespace-nowrap">
+              {isExporting ? 'Exporting...' : 'Export'}
+            </span>
+            <SafeIcon icon={ChevronDown} size={12} className={`transition-transform duration-200 ${showExportDropdown ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showExportDropdown && (
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-xl rounded-xl z-[60] overflow-hidden">
+              <div className="px-3 py-2 border-b border-gray-50 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50">
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-slate-500">Choose Format</span>
+              </div>
+              <div className="p-1">
+                <button
+                  onClick={handleExportPDF}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                >
+                  <div className="p-1.5 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-md">
+                    <SafeIcon icon={File} size={14} />
+                  </div>
+                  <span>PDF Document</span>
+                </button>
+                <button
+                  onClick={handleExportWord}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                >
+                  <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-md">
+                    <SafeIcon icon={File} size={14} />
+                  </div>
+                  <span>Word (.doc)</span>
+                </button>
+                <button
+                  onClick={handleExportText}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-colors text-left font-medium"
+                >
+                  <div className="p-1.5 bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 rounded-md">
+                    <SafeIcon icon={FileText} size={14} />
+                  </div>
+                  <span>Plain Text</span>
+                </button>
+              </div>
+            </div>
           )}
-          <span className="text-xs font-bold whitespace-nowrap">
-            {isExporting ? 'Exporting...' : 'PDF'}
-          </span>
-        </button>
+        </div>
         
         <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500 font-medium px-2">
           <SafeIcon icon={Save} size={14} className="text-green-500" />
